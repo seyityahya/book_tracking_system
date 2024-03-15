@@ -38,5 +38,8 @@
     "tailwindcss": "3.3.2",
     "timeago": "^1.6.7",
     "timeago.js": "^4.0.2"
+  },
+  "devDependencies": {
+    "@types/react": "18.2.66"
   }
 }

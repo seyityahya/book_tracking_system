@@ -67,7 +67,7 @@ const ProfilePost = ({ key, book }) => {
 
   useEffect(() => {
     async function fetchUser() {
-      const res = await fetch(`/api/profile/${book.user}`, {
+      const res = await fetch(`/api/profile/${book.user._id}`, {
         cache: "no-store",
       });
       const user = await res.json();

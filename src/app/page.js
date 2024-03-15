@@ -6,6 +6,7 @@ import classes from "./page.module.css";
 import { fetchProfilesAll, getBookPage } from "./api";
 import { PropagateLoader } from "react-spinners";
 import { set } from "mongoose";
+import PaginationButton from "@/components/paginationBtn/PaginationButton";
 
 const Home = () => {
   const [books, setBooks] = useState([]);
@@ -51,11 +52,10 @@ const Home = () => {
           )}
         </div>
       </div>
-      {currentPage < totalPages ? <button
-        className="bg-blue-500 hover:bg-blue-400 text-white font-bold py-2 px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded mx-auto mt-10 mb-0"
-        onClick={fetchMoreBooks}>
-        Daha fazla göster
-      </button> : null}
+      <PaginationButton
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onClick={fetchMoreBooks} />
     </div>
   );
 };

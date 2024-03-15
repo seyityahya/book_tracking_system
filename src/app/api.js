@@ -77,6 +77,12 @@ export async function fetchProfileBook(userId) {
   return data;
 }
 
+export async function fetchProfileBookPage(userId, page) {
+  const response = await fetch(`/api/book/profile/${userId}/${page}`);
+  const data = await response.json();
+  return data;
+}
+
 export async function fetchAllProfile() {
   const response = await fetch(`/api/profile`);
   const data = await response.json();

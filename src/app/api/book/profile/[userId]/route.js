@@ -5,7 +5,7 @@ import Book from "@/models/Book";
 export async function GET(req, ctx) {
   await connect();
 
-  const userId = ctx.params.id;
+  const userId = ctx.params.userId;
 
   try {
     const book = await Book.find({ user: userId }).select("-user.password");

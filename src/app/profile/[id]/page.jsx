@@ -8,24 +8,25 @@ import { TbNetwork } from "react-icons/tb";
 import { BsFillPostcardFill } from "react-icons/bs";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import classes from "./profile.module.css";
 import Image from "next/image";
 import ProfilePost from "@/components/profilePost/ProfilePost";
 import person from "../../../../public/person.jpg";
 import background from "../../../../public/background2.jpg";
-import { fetchProfileBook, fetchProfile, fetchAllProfile } from "@/app/api";
+import { fetchProfileBookPage, fetchProfile, fetchAllProfile } from "@/app/api";
 import Suggestion from "@/components/suggestion/Suggestion";
+import PaginationButton from "@/components/paginationBtn/PaginationButton";
 
 const Profile = (ctx) => {
   const [suggestion, setSuggestion] = useState([]);
   const [user, setUser] = useState("");
-  const [books, setBooks] = useState("");
+  const [books, setBooks] = useState([]);
   const [navbarSelect, setNavbarSelect] = useState("yayınlar");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   const { data: session } = useSession(false);
 
-  const router = useRouter();
   let userBirthday = "";
 
   useEffect(() => {
@@ -34,9 +35,16 @@ const Profile = (ctx) => {
 
       setUser(user);
     }
+    
     async function fetchBooks() {
-      const book = await fetchProfileBook(ctx.params.id);
-      setBooks(book);
+      const response = await fetchProfileBookPage(ctx.params.id, currentPage);
+      const fetchedBooks = response.books;
+      const fetchedTotalPages = response.totalPages;
+      const fetchedCurrentPages = response.currentPage;
+
+      setCurrentPage(fetchedCurrentPages);
+      setTotalPages(fetchedTotalPages);
+      setBooks(fetchedBooks);
     }
     async function fetchSuggestion() {
       const users = await fetchAllProfile();
@@ -58,6 +66,19 @@ const Profile = (ctx) => {
 
   if (user.birthday) {
     userBirthday = user.birthday.split("T")[0];
+  }
+
+  async function fetchMoreBooks() {
+    const response = await fetchProfileBookPage(ctx.params.id ,currentPage + 1);
+    const fetchedBooks = response.books;
+    const fetchedTotalPages = response.totalPages;
+    const fetchedCurrentPages = response.currentPage;
+
+    console.log(fetchedBooks.length, "--------");
+
+    setCurrentPage(fetchedCurrentPages);
+    setTotalPages(fetchedTotalPages);
+    setBooks([...books, ...fetchedBooks]);
   }
 
   return (
@@ -143,6 +164,11 @@ const Profile = (ctx) => {
               ) : (
                 <div>kitap yok</div>
               )}
+              <PaginationButton
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onClick={fetchMoreBooks}
+                margin="mt-2 mb-10" />
             </div>
           ) : (
             ""
