@@ -27,6 +27,11 @@ const Profile = (ctx) => {
   let userBirthday = "";
 
   useEffect(() => {
+    async function fetchUser() {
+      const user = await fetchProfile(ctx.params.id);
+
+      setUser(user);
+    }
     async function fetchData() {
       const cachedBooks = JSON.parse(localStorage.getItem("profileBooks"));
       if (cachedBooks) {
@@ -58,6 +63,7 @@ const Profile = (ctx) => {
       const randomUsers = shuffledData.slice(0, 3);
       setSuggestion(randomUsers);
     }
+    fetchUser();
     fetchData();
     fetchSuggestion();
   }, [ctx, session]);
