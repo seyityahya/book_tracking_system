@@ -6,7 +6,7 @@ export async function GET(req, ctx) {
     const page = ctx.params.id ? parseInt(ctx.params.id) : 1;
 
     // Bir sayfada kaç adet kitap gösterileceğini belirliyoruz.
-    const perPage = 10;
+    const perPage = 6;
 
     await connect();
 
@@ -18,7 +18,7 @@ export async function GET(req, ctx) {
         const totalPages = Math.ceil(totalCount / perPage);
 
         // skip: Sorgudan önce kaç kitap atlanacağını belirler.
-        // (page - 1) * perPage -> page = 1 için 0, page = 2 için 10, page = 3 için 20, kitap atlanır.
+        // (page - 1) * perPage -> page = 1 için 0, page = 2 için 6, page = 3 için 12, kitap atlanır.
         // limit: Sorgudan kaç kitap alınacağını belirler.
         const books = await Book.find({})
             .populate("user")

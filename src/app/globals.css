@@ -12,3 +12,15 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+
+.gray-btn {
+  outline: none;
+  border: none;
+  padding: 5px 15px;
+  font-size: 17px;
+  background-color: rgb(70, 70, 70);
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+}
