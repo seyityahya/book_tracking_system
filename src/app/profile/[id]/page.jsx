@@ -12,6 +12,7 @@ import ProfilePost from "@/components/profilePost/ProfilePost";
 import background from "../../../../public/background2.jpg";
 import { fetchProfileBookPage, fetchProfile, fetchAllProfile } from "@/app/api";
 import Suggestion from "@/components/suggestion/Suggestion";
+import { ProfileImageControl } from "@/components/imageUndefined/ImageUndefined";
 import PaginationButton from "@/components/paginationBtn/PaginationButton";
 
 const Profile = (ctx) => {
@@ -51,14 +52,19 @@ const Profile = (ctx) => {
         const cachedData = {
           books: fetchedBooks,
           currentPage: fetchedCurrentPages,
-          totalPages: fetchedTotalPages
+          totalPages: fetchedTotalPages,
         };
         localStorage.setItem("profileBooks", JSON.stringify(cachedData));
       }
     }
     async function fetchSuggestion() {
+      if (suggestion.length > 1) {
+        return;
+      }
       const users = await fetchAllProfile();
-      const filteredUser = users.filter((user) => user._id !== session?.user?._id);
+      const filteredUser = users.filter(
+        (user) => user._id !== session?.user?._id
+      );
       const shuffledData = filteredUser.sort(() => Math.random() - 0.5);
       const randomUsers = shuffledData.slice(0, 3);
       setSuggestion(randomUsers);
@@ -66,14 +72,14 @@ const Profile = (ctx) => {
     fetchUser();
     fetchData();
     fetchSuggestion();
-  }, [ctx, session]);
+  }, [ctx, session, suggestion]);
 
   const handleButtonClick = (buttonName) => {
     setNavbarSelect(buttonName);
   };
 
   async function fetchMoreBooks() {
-    const response = await fetchProfileBookPage(ctx.params.id ,currentPage + 1);
+    const response = await fetchProfileBookPage(ctx.params.id, currentPage + 1);
     const fetchedBooks = response.books;
     const fetchedTotalPages = response.totalPages;
     const fetchedCurrentPages = response.currentPage;
@@ -84,7 +90,7 @@ const Profile = (ctx) => {
     const cachedData = {
       books: [...books, ...fetchedBooks],
       currentPage: fetchedCurrentPages,
-      totalPages: fetchedTotalPages
+      totalPages: fetchedTotalPages,
     };
     localStorage.setItem("profileBooks", JSON.stringify(cachedData));
   }
@@ -125,12 +131,13 @@ const Profile = (ctx) => {
           <div className={classes.personProfile}>
             <div className={classes.top}>
               <div className={classes.profileImageContainer}>
-                <Image
+                <ProfileImageControl
+                  altImage="profilePerson"
+                  imageName={user?.profilImage}
+                  widthImage="150"
+                  heightImage="150"
                   className={classes.profileImage}
-                  alt="profilePerson"
-                  src={`https://bookwave-profile-image.s3.eu-central-1.amazonaws.com/profileImage/${user?.profilImage}`}
-                  width={150}
-                  height={150}
+                  person={true}
                 />
               </div>
               <h2>
@@ -167,16 +174,19 @@ const Profile = (ctx) => {
         <div className={classes.post}>
           {navbarSelect === "yayınlar" ? (
             <div className={classes.postAndStory}>
-              {books?.length > 0 ? (
+              {books === "dont" ? (
+                <div>kitap yok</div>
+              ) : books?.length > 0 ? (
                 books.map((book) => <ProfilePost key={book._id} book={book} />)
               ) : (
-                <div>kitap yok</div>
+                <></>
               )}
               <PaginationButton
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onClick={fetchMoreBooks}
-                margin="mt-2 mb-10" />
+                margin="mt-2 mb-10"
+              />
             </div>
           ) : (
             ""
@@ -189,9 +199,7 @@ const Profile = (ctx) => {
         <div className={classes.right}>
           <h2>Takip Önerisi</h2>
           {suggestion?.length > 0 ? (
-            suggestion.map((user) => (
-              <Suggestion key={suggestion._id} user={user} />
-            ))
+            suggestion.map((user) => <Suggestion key={user._id} user={user} />)
           ) : (
             <div>öneriler yükleniyor...</div>
           )}
