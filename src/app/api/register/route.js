@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import User from "@/models/User";
 import connect from "@/lib/db";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import sendEmail from "@/helpers/mail/mail.helper";
 
 const s3Client = new S3Client({
   region: process.env.REGION,
@@ -90,6 +91,20 @@ export async function POST(req) {
     });
 
     const { password, ...user } = newUser._doc;
+
+    const body = `
+    <div style="background-color: #f4f4f4; padding: 20px; font-family: Arial, sans-serif;">
+      <img src="https://www.booksment.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FnewLogo.41e5950b.png&w=640&q=75" style="display: block; margin: 0 auto;">
+      <h1 style="color: #333; text-align: center;">Welcome to Our Community</h1>
+      <p style="color: #333; text-align: center;">Dear ${user.username},</p>
+      <p style="color: #333; text-align: center;">We are thrilled to have you here! Get ready to share your stories and connect with other people.</p>
+      <hr>
+      <p style="color: #333; text-align: center;">If you have any questions, feel free to reach out to our support team.</p>
+      <p style="color: #333; text-align: center;">Best,</p>
+      <a href="https://www.booksment.com/"><p style="color: #333; text-align: center; font-style: italic;">Booksment</p></a>
+    </div>
+    `;
+    await sendEmail(user.email, "Welcome to our community", body);
 
     return new Response(JSON.stringify(user), { status: 201 });
   } catch (error) {

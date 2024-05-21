@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const config = {
     mail: process.env.MAIL,
     port: process.env.MAIL_PORT,
-    pass: process.env.MAIL_PASS,
+    pass: process.env.MAIL_PASSWORD,
     host: process.env.MAIL_HOST,
 }
 
@@ -29,6 +29,8 @@ let transporter = nodemailer.createTransport({
  * @param {String} body Email body
  */
 const sendEmail = async (to, subject, body) => {
+    console.log(config, "*********");
+
     // Setting mail options
     const mailOptions = {
         from: 'Booksment <norply@booksment.com.tr>',
