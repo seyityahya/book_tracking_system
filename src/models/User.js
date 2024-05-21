@@ -50,6 +50,9 @@ const UserSchema = new mongoose.Schema(
     profilImage: {
       type: String,
     },
+    lastLoginIp: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
