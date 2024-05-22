@@ -53,6 +53,10 @@ const UserSchema = new mongoose.Schema(
     lastLoginIp: {
       type: String,
     },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

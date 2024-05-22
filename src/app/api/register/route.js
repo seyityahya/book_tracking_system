@@ -101,7 +101,10 @@ export async function POST(req) {
       <hr>
       <p style="color: #333; text-align: center;">If you have any questions, feel free to reach out to our support team.</p>
       <p style="color: #333; text-align: center;">Best,</p>
-      <a href="https://www.booksment.com/"><p style="color: #333; text-align: center; font-style: italic;">Booksment</p></a>
+      <a href="https://www.booksment.com"><p style="color: #333; text-align: center; font-style: italic;">Booksment</p></a>
+      <div style="text-align: center;">
+        <a href="http://localhost:3000/verifyMailAddress/${user._id}" style="background-color: #4CAF50; color: white; padding: 14px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border: none; border-radius: 5px;">Verify Email</a>
+      </div>
     </div>
     `;
     await sendEmail(user.email, "Welcome to our community", body);

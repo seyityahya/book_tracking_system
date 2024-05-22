@@ -144,3 +144,16 @@ export async function fetchProfileBookPage(userId, page) {
   const data = await response.json();
   return data;
 }
+
+export async function updateUser(body) {
+  const response = await fetch(`/api/user/${body.id}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "PUT",
+    body: JSON.stringify(body),
+  });
+
+  const data = await response.json();
+  return data;
+}

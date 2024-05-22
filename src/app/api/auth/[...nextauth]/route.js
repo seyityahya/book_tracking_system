@@ -50,7 +50,6 @@ const handler = NextAuth({
             `;
             // Send the email
             await sendEmail(currentUser.email, "New Suspected Login Detected", body);
-            console.log("Email sent");
           }
 
           // Update the last login IP address
