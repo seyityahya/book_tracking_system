@@ -7,11 +7,21 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import classes from "./login.module.css";
 import { signIn } from "next-auth/react";
+import { fetchUserWithMail, sendVerifyMail } from "../api";
+import TransitionDialog from "@/components/dialogs/TransitionDialog";
+import TimerProgress from "@/components/timer/TimerProgress";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [disabled, setDisabled] = useState(false);
+  const [isShowMailDialog, setIsShowMailDialog] = useState(false);
+  const [user, setUser] = useState(null);
+  const [dialogOpen, setDialogOpen] = useState(true);
+  const [startProgress, setStartProgress] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -31,6 +41,21 @@ const Login = () => {
     }
 
     try {
+      const user = await fetchUserWithMail(email);
+      setUser(user);
+
+      if (user === 'User not found') {
+        toast.error("User not found");
+        setDisabled(false);
+        return;
+      }
+
+      if (!user.isEmailVerified) {
+        setDisabled(false);
+        setIsShowMailDialog(true);
+        return;
+      }
+
       const res = await signIn("credentials", {
         email,
         password,
@@ -46,6 +71,11 @@ const Login = () => {
       console.log(error);
     }
     setDisabled(false);
+  };
+
+  const handleSendMail = async () => {
+    await sendVerifyMail(user.email, user._id);
+    setStartProgress(true);
   };
 
   return (
@@ -96,6 +126,26 @@ const Login = () => {
         </div>
       </div>
       <ToastContainer />
+      {user && !user?.isEmailVerified && isShowMailDialog &&
+        (<TransitionDialog
+          open={dialogOpen}
+          setOpen={setDialogOpen}
+          title={"E-Posta Doğrulama"}
+          content={
+            "E-Postanızı doğrulamadığınız için bazı özelliklere erişim sağlayamazsınız. E-Postanıza gönderilen doğrulama linkine tıklayarak e-postanızı doğrulayabilirsiniz."
+          }
+          firstButtonLabel={startProgress ? `${progress} sn sonra tekrar gönder.` : "Doğrulama E-Postası Gönder"}
+          handleFirstButton={startProgress ? () => { } : handleSendMail}
+          isTwoButton={false}
+          isShowCloseButton={false}
+          buttonDisabled={startProgress}
+          children={
+            startProgress && (
+              <TimerProgress
+                progress={progress}
+                setProgress={setProgress}
+              />)}
+        />)}
     </div>
   );
 };

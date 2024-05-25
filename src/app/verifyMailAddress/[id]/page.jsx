@@ -21,7 +21,7 @@ const VerifyMailAddressPage = (ctx) => {
 
             if (user) {
                 toast.success("Email verified successfully");
-                router.push("/login");
+                router.push("/");
             }
             setIsVerifying(false);
         }

@@ -11,6 +11,7 @@ const Home = () => {
   const [books, setBooks] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
   useEffect(() => {
     async function fetchBooks() {
       const response = await getBookPage(currentPage);

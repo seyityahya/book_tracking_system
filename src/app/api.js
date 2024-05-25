@@ -1,3 +1,5 @@
+import { toast } from "react-toastify";
+
 export async function getBook() {
   const response = await fetch(`/api/book`);
   const data = await response.json();
@@ -156,4 +158,33 @@ export async function updateUser(body) {
 
   const data = await response.json();
   return data;
+}
+
+export async function fetchUserWithMail(email) {
+  const response = await fetch(`/api/user/getUserWithMail`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await response.json();
+  return data;
+}
+
+export async function sendVerifyMail(email, id) {
+  const response = await fetch(`/api/auth/sendVerifyMail`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ email, id }),
+  });
+
+  if (response.status === 200) {
+    toast.success("Mail has been sent!");
+  } else {
+    toast.error("Error occured while sending mail");
+  }
 }
