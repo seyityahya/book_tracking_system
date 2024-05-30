@@ -32,6 +32,11 @@ export default function TransitionDialog({
         setOpen(false);
     };
 
+    // Prevent dialog closure on backdrop click
+    const handleBackdropClick = (event) => {
+        event.stopPropagation(); // Stop event propagation to parent elements
+    };
+
     return (
         <React.Fragment>
             <Dialog
@@ -39,6 +44,7 @@ export default function TransitionDialog({
                 TransitionComponent={Transition}
                 keepMounted
                 onClose={handleClose}
+                onClick={handleBackdropClick}
                 aria-describedby="alert-dialog-slide-description"
             >
                 <DialogTitle>{title}</DialogTitle>

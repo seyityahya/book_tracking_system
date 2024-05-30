@@ -41,7 +41,14 @@ const Login = () => {
     }
 
     try {
-      const user = await fetchUserWithMail(email);
+      const user = await fetchUserWithMail(email, password);
+
+      if (user === "User not found" || user === "Email and password incorrect!") {
+        toast.error(user);
+        setDisabled(false);
+        return;
+      }
+      
       setUser(user);
 
       if (user === 'User not found') {
@@ -118,6 +125,11 @@ const Login = () => {
               placeholder="Şifre"
               onChange={(e) => setPassword(e.target.value)}
             />
+            <Link
+              className={classes.forgotPassword}
+              href={"/forgotPassword"}>
+              Şifremi Unuttum?
+            </Link>
 
             <button disabled={disabled} className={classes.submitButton}>
               Giriş Yap
@@ -144,6 +156,7 @@ const Login = () => {
               <TimerProgress
                 progress={progress}
                 setProgress={setProgress}
+                setStartProgress={setStartProgress}
               />)}
         />)}
     </div>

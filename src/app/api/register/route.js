@@ -54,7 +54,7 @@ export async function POST(req) {
       name,
       username,
       email,
-      password: pass,
+      password,
       location,
       website,
       birthday,
@@ -69,7 +69,6 @@ export async function POST(req) {
       throw new Error("User already exists");
     }
 
-    const hashedPassword = await bcrypt.hash(pass, 10);
     let imageName = "";
 
     if (selectedImage !== null && selectedImage && selectedImage !== "null") {
@@ -77,11 +76,12 @@ export async function POST(req) {
       imageName = await uploadFileToS3(buffer, selectedImage.name);
     }
 
-    const newUser = await User.create({
+
+    console.log({
       name,
       username,
       email,
-      password: hashedPassword,
+      password,
       location,
       website,
       birthday,
@@ -90,27 +90,41 @@ export async function POST(req) {
       profilImage: imageName,
     });
 
-    const { password, ...user } = newUser._doc;
+    const newUser = await User.create({
+      name,
+      username,
+      email,
+      password,
+      location,
+      website,
+      birthday,
+      word,
+      story,
+      profilImage: imageName,
+    });
+
+    await newUser.save();
 
     const body = `
     <div style="background-color: #f4f4f4; padding: 20px; font-family: Arial, sans-serif;">
       <img src="https://www.booksment.com/_next/image?url=%2F_next%2Fstatic%2Fmedia%2FnewLogo.41e5950b.png&w=640&q=75" style="display: block; margin: 0 auto;">
       <h1 style="color: #333; text-align: center;">Welcome to Our Community</h1>
-      <p style="color: #333; text-align: center;">Dear ${user.username},</p>
+      <p style="color: #333; text-align: center;">Dear ${newUser.username},</p>
       <p style="color: #333; text-align: center;">We are thrilled to have you here! Get ready to share your stories and connect with other people.</p>
       <hr>
       <p style="color: #333; text-align: center;">If you have any questions, feel free to reach out to our support team.</p>
       <p style="color: #333; text-align: center;">Best,</p>
       <a href="https://www.booksment.com"><p style="color: #333; text-align: center; font-style: italic;">Booksment</p></a>
       <div style="text-align: center;">
-        <a href="http://localhost:3000/verifyMailAddress/${user._id}" style="background-color: #4CAF50; color: white; padding: 14px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border: none; border-radius: 5px;">Verify Email</a>
+        <a href="http://localhost:3000/verifyMailAddress/${newUser._id}" style="background-color: #4CAF50; color: white; padding: 14px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border: none; border-radius: 5px;">Verify Email</a>
       </div>
     </div>
     `;
-    await sendEmail(user.email, "Welcome to our community", body);
+    await sendEmail(newUser.email, "Welcome to our community", body);
 
-    return new Response(JSON.stringify(user), { status: 201 });
+    return new Response(JSON.stringify(newUser), { status: 201 });
   } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify(error.message), { status: 500 });
   }
 }

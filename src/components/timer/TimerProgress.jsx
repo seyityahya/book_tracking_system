@@ -2,16 +2,17 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 
-function TimerProgress({progress, setProgress}) {
+function TimerProgress({ progress, setProgress, setStartProgress }) {
 
     useEffect(() => {
         const timer = setInterval(() => {
             setProgress((oldProgress) => {
                 if (oldProgress === 100) {
                     clearInterval(timer);
+                    setStartProgress(false);
                     return 100;
                 }
-                const diff = 100 / 200; // 200 seconds
+                const diff = 100 / 200;
                 return Math.min(oldProgress + diff, 100);
             });
         }, 1000);
@@ -24,7 +25,7 @@ function TimerProgress({progress, setProgress}) {
     return <div className='mt-3'>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Box sx={{ width: '100%', mr: 1 }}>
-                <LinearProgress 
+                <LinearProgress
                     variant="determinate"
                     value={progress}
                 />

@@ -1,9 +1,10 @@
 import connect from "@/lib/db";
 import User from "@/models/User";
+import bcrypt from "bcrypt";
 
 export async function POST(req) {
     try {
-        const { email } = await req.json();
+        const { email, password } = await req.json();
 
         await connect();
 
@@ -13,6 +14,12 @@ export async function POST(req) {
 
         if (!user) {
             return new Response(JSON.stringify("User not found!"), { status: 404 });
+        }
+
+        const comparePass = await bcrypt.compare(password, user.password);
+
+        if (!comparePass) {
+            return new Response(JSON.stringify("Email and password incorrect!"), { status: 400 });
         }
 
         return new Response(JSON.stringify(user), { status: 200 });

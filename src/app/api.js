@@ -160,13 +160,13 @@ export async function updateUser(body) {
   return data;
 }
 
-export async function fetchUserWithMail(email) {
+export async function fetchUserWithMail(email, password) {
   const response = await fetch(`/api/user/getUserWithMail`, {
     headers: {
       "Content-Type": "application/json",
     },
     method: "POST",
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, password }),
   });
 
   const data = await response.json();
@@ -186,5 +186,52 @@ export async function sendVerifyMail(email, id) {
     toast.success("Mail has been sent!");
   } else {
     toast.error("Error occured while sending mail");
+  }
+}
+
+export async function sendForgotPasswordMail(email) {
+  const response = await fetch(`/api/auth/forgotPassword`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+  const data = await response.json();
+  if (response.status === 200) {
+    toast.success(data);
+  } else {
+    toast.error(data ?? "Error occured while sending mail");
+  }
+}
+
+export async function checkResetPasswordToken(resetPasswordToken) {
+  const response = await fetch(`/api/auth/checkResetPasswordToken`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ resetPasswordToken }),
+  });
+
+  console.log(response.status);
+
+  return response.status === 200;
+}
+
+export async function resetPassword(resetPasswordToken, newPassword) {
+
+  const response = await fetch(`/api/auth/resetPassword`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({ resetPasswordToken, newPassword }),
+  });
+
+  if (response.status === 200) {
+    toast.success("Password reset successful");
+  } else {
+    toast.error("Invalid token");
   }
 }

@@ -20,8 +20,8 @@ const VerifyMailAddressPage = (ctx) => {
             const user = await updateUser(req);
 
             if (user) {
-                toast.success("Email verified successfully");
-                router.push("/");
+                router.push("/login");
+                toast.success("Email verified successfully", {autoClose: 5000});
             }
             setIsVerifying(false);
         }

@@ -54,7 +54,6 @@ const handler = NextAuth({
 
           // Update the last login IP address
           await User.updateOne({ email }, { $set: { lastLoginIp: userIpAddress } });
-
           const accessToken = signJwtToken(currentUser, { expiresIn: "6d" });
 
           return {
